@@ -4,8 +4,14 @@
  */
 package interfaz;
 
-import java.awt.Component;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import modelo.*;
 
@@ -17,12 +23,28 @@ public class MenuPrincipal extends javax.swing.JFrame {
     //ATRIBUTOS
     private ArrayList<Alumno> listaAlumnos = new ArrayList();
     private ArrayList<Modulo> listaModulos = new ArrayList();
+    private DefaultListModel modelListaModAlum=new DefaultListModel();
+    private File txtAlumnos=new File("alumnos.txt");
+    private File txtModulos=new File("modulos.txt");
+    private ObjectOutputStream outGuardar;
+    private ObjectInputStream inCargar;
 
     /**
      * Creates new form Menu
      */
     public MenuPrincipal() {
         initComponents();
+        try{
+            if(!txtAlumnos.exists()){
+            txtAlumnos.createNewFile();
+            }
+            if(!txtModulos.exists()){
+                txtModulos.createNewFile();
+            }
+        }
+        catch(IOException e){
+            JOptionPane.showMessageDialog(this, "Error en el manejo de archivos.");
+        }
     }
 
     /**
@@ -61,6 +83,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         lblAltaAlum = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jlAnaModAlum = new javax.swing.JList<>();
+        btnAnaModAlum = new javax.swing.JButton();
         jdVerAlum = new javax.swing.JDialog();
         jPanel3 = new javax.swing.JPanel();
         lblVerModAlum = new javax.swing.JLabel();
@@ -123,17 +146,17 @@ public class MenuPrincipal extends javax.swing.JFrame {
         lblUnidadesMod.setMinimumSize(new java.awt.Dimension(70, 20));
         lblUnidadesMod.setPreferredSize(new java.awt.Dimension(70, 20));
 
-        txtNombreMod.setMaximumSize(new java.awt.Dimension(150, 20));
-        txtNombreMod.setMinimumSize(new java.awt.Dimension(150, 20));
-        txtNombreMod.setPreferredSize(new java.awt.Dimension(150, 20));
+        txtNombreMod.setMaximumSize(new java.awt.Dimension(150, 25));
+        txtNombreMod.setMinimumSize(new java.awt.Dimension(150, 25));
+        txtNombreMod.setPreferredSize(new java.awt.Dimension(150, 25));
 
-        txtHorasMod.setMaximumSize(new java.awt.Dimension(150, 20));
-        txtHorasMod.setMinimumSize(new java.awt.Dimension(150, 20));
-        txtHorasMod.setPreferredSize(new java.awt.Dimension(150, 20));
+        txtHorasMod.setMaximumSize(new java.awt.Dimension(150, 25));
+        txtHorasMod.setMinimumSize(new java.awt.Dimension(150, 25));
+        txtHorasMod.setPreferredSize(new java.awt.Dimension(150, 25));
 
-        txtUnidadesMod.setMaximumSize(new java.awt.Dimension(150, 20));
-        txtUnidadesMod.setMinimumSize(new java.awt.Dimension(150, 20));
-        txtUnidadesMod.setPreferredSize(new java.awt.Dimension(150, 20));
+        txtUnidadesMod.setMaximumSize(new java.awt.Dimension(150, 25));
+        txtUnidadesMod.setMinimumSize(new java.awt.Dimension(150, 25));
+        txtUnidadesMod.setPreferredSize(new java.awt.Dimension(150, 25));
 
         javax.swing.GroupLayout jpAnadirModLayout = new javax.swing.GroupLayout(jpAnadirMod);
         jpAnadirMod.setLayout(jpAnadirModLayout);
@@ -222,7 +245,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGrabarMod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnLimpiarMod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(253, Short.MAX_VALUE))
+                .addContainerGap(238, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jdAnadirModulLayout = new javax.swing.GroupLayout(jdAnadirModul.getContentPane());
@@ -299,13 +322,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
         lblAnaLocalidadAlum.setMinimumSize(new java.awt.Dimension(70, 20));
         lblAnaLocalidadAlum.setPreferredSize(new java.awt.Dimension(70, 20));
 
-        txtAnaNombreAlum.setMaximumSize(new java.awt.Dimension(150, 20));
-        txtAnaNombreAlum.setMinimumSize(new java.awt.Dimension(150, 20));
-        txtAnaNombreAlum.setPreferredSize(new java.awt.Dimension(150, 20));
+        txtAnaNombreAlum.setMaximumSize(new java.awt.Dimension(150, 25));
+        txtAnaNombreAlum.setMinimumSize(new java.awt.Dimension(150, 25));
+        txtAnaNombreAlum.setPreferredSize(new java.awt.Dimension(150, 25));
 
-        txtAnaLocalidadAlum.setMaximumSize(new java.awt.Dimension(150, 20));
-        txtAnaLocalidadAlum.setMinimumSize(new java.awt.Dimension(150, 20));
-        txtAnaLocalidadAlum.setPreferredSize(new java.awt.Dimension(150, 20));
+        txtAnaLocalidadAlum.setMaximumSize(new java.awt.Dimension(150, 25));
+        txtAnaLocalidadAlum.setMinimumSize(new java.awt.Dimension(150, 25));
+        txtAnaLocalidadAlum.setPreferredSize(new java.awt.Dimension(150, 25));
 
         javax.swing.GroupLayout jpAnadirAlumLayout = new javax.swing.GroupLayout(jpAnadirAlum);
         jpAnadirAlum.setLayout(jpAnadirAlumLayout);
@@ -345,6 +368,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         jScrollPane3.setViewportView(jlAnaModAlum);
 
+        btnAnaModAlum.setText("Añadir");
+        btnAnaModAlum.setMaximumSize(new java.awt.Dimension(80, 20));
+        btnAnaModAlum.setMinimumSize(new java.awt.Dimension(80, 20));
+        btnAnaModAlum.setPreferredSize(new java.awt.Dimension(80, 20));
+        btnAnaModAlum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAnaModAlumActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -365,7 +398,9 @@ public class MenuPrincipal extends javax.swing.JFrame {
                                     .addGap(18, 18, 18)
                                     .addComponent(jcbModuls, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnQuitarModAlum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnQuitarModAlum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAnaModAlum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(1, 1, 1)
                         .addComponent(btnGrabarAlum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -383,7 +418,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jcbModuls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblMatricMod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblMatricMod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAnaModAlum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(35, 35, 35)
@@ -395,7 +431,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnGrabarAlum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnLimpiarAlum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(128, Short.MAX_VALUE))
+                .addContainerGap(118, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jdAnadirAlumLayout = new javax.swing.GroupLayout(jdAnadirAlum.getContentPane());
@@ -436,14 +472,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         lblVerLocalidadAlum.setPreferredSize(new java.awt.Dimension(70, 20));
 
         txtVerNombreAlum.setEditable(false);
-        txtVerNombreAlum.setMaximumSize(new java.awt.Dimension(150, 20));
-        txtVerNombreAlum.setMinimumSize(new java.awt.Dimension(150, 20));
-        txtVerNombreAlum.setPreferredSize(new java.awt.Dimension(150, 20));
+        txtVerNombreAlum.setMaximumSize(new java.awt.Dimension(150, 25));
+        txtVerNombreAlum.setMinimumSize(new java.awt.Dimension(150, 25));
+        txtVerNombreAlum.setPreferredSize(new java.awt.Dimension(150, 25));
 
         txtVerLocalidadAlum.setEditable(false);
-        txtVerLocalidadAlum.setMaximumSize(new java.awt.Dimension(150, 20));
-        txtVerLocalidadAlum.setMinimumSize(new java.awt.Dimension(150, 20));
-        txtVerLocalidadAlum.setPreferredSize(new java.awt.Dimension(150, 20));
+        txtVerLocalidadAlum.setMaximumSize(new java.awt.Dimension(150, 25));
+        txtVerLocalidadAlum.setMinimumSize(new java.awt.Dimension(150, 25));
+        txtVerLocalidadAlum.setPreferredSize(new java.awt.Dimension(150, 25));
 
         lblVerHorasAlum.setText("Horas:");
         lblVerHorasAlum.setMaximumSize(new java.awt.Dimension(70, 20));
@@ -451,9 +487,9 @@ public class MenuPrincipal extends javax.swing.JFrame {
         lblVerHorasAlum.setPreferredSize(new java.awt.Dimension(70, 20));
 
         txtVerHorasAlum.setEditable(false);
-        txtVerHorasAlum.setMaximumSize(new java.awt.Dimension(150, 20));
-        txtVerHorasAlum.setMinimumSize(new java.awt.Dimension(150, 20));
-        txtVerHorasAlum.setPreferredSize(new java.awt.Dimension(150, 20));
+        txtVerHorasAlum.setMaximumSize(new java.awt.Dimension(150, 25));
+        txtVerHorasAlum.setMinimumSize(new java.awt.Dimension(150, 25));
+        txtVerHorasAlum.setPreferredSize(new java.awt.Dimension(150, 25));
 
         javax.swing.GroupLayout jpDatosAlumLayout = new javax.swing.GroupLayout(jpDatosAlum);
         jpDatosAlum.setLayout(jpDatosAlumLayout);
@@ -499,20 +535,20 @@ public class MenuPrincipal extends javax.swing.JFrame {
         lblNombreBuscarAlum.setMinimumSize(new java.awt.Dimension(120, 20));
         lblNombreBuscarAlum.setPreferredSize(new java.awt.Dimension(120, 20));
 
-        txtNombreAlumBuscar.setMaximumSize(new java.awt.Dimension(150, 20));
-        txtNombreAlumBuscar.setMinimumSize(new java.awt.Dimension(150, 20));
-        txtNombreAlumBuscar.setPreferredSize(new java.awt.Dimension(150, 20));
+        txtNombreAlumBuscar.setMaximumSize(new java.awt.Dimension(150, 25));
+        txtNombreAlumBuscar.setMinimumSize(new java.awt.Dimension(150, 25));
+        txtNombreAlumBuscar.setPreferredSize(new java.awt.Dimension(150, 25));
 
         btnMostrarAlum.setText("Mostrar");
         btnMostrarAlum.setMaximumSize(new java.awt.Dimension(80, 20));
         btnMostrarAlum.setMinimumSize(new java.awt.Dimension(80, 20));
         btnMostrarAlum.setPreferredSize(new java.awt.Dimension(80, 20));
-
-        jlVerModAlum.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        btnMostrarAlum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMostrarAlumActionPerformed(evt);
+            }
         });
+
         jScrollPane4.setViewportView(jlVerModAlum);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -552,7 +588,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(139, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jdVerAlumLayout = new javax.swing.GroupLayout(jdVerAlum.getContentPane());
@@ -723,6 +759,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private void btnAnadirAlumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnadirAlumActionPerformed
         // TODO add your handling code here:
         jdAnadirAlum.setVisible(true);
+        cargarModulosDisponibles();
     }//GEN-LAST:event_btnAnadirAlumActionPerformed
 
     private void btnVerAlumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerAlumActionPerformed
@@ -742,10 +779,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
     private void jmiGuardarAlumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGuardarAlumActionPerformed
         // TODO add your handling code here:
+        guardarAlumnosTxt();
     }//GEN-LAST:event_jmiGuardarAlumActionPerformed
 
     private void jmiSalvarAlumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiSalvarAlumActionPerformed
         // TODO add your handling code here:
+        cargarAlumnosTxt();
     }//GEN-LAST:event_jmiSalvarAlumActionPerformed
 
     private void jmiAnadirModulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAnadirModulActionPerformed
@@ -755,11 +794,67 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
     private void jmiGuardarModulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGuardarModulActionPerformed
         // TODO add your handling code here:
+        guardarModulosTxt();
     }//GEN-LAST:event_jmiGuardarModulActionPerformed
 
     private void jmiSalvarModulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiSalvarModulActionPerformed
         // TODO add your handling code here:
+        cargarModulosTxt();
     }//GEN-LAST:event_jmiSalvarModulActionPerformed
+
+    
+    
+    //FICHEROS//
+    
+    private void inicializarOutputGuardar(File f) throws IOException {
+        outGuardar=new ObjectOutputStream(new FileOutputStream(f));
+    }
+    
+    private void inicializarInputCargar(File f) throws IOException {
+        inCargar=new ObjectInputStream(new FileInputStream(f));
+    }
+    
+    private void guardarAlumnosTxt(){
+        try {
+            inicializarOutputGuardar(txtAlumnos);
+            outGuardar.writeObject(listaAlumnos);
+            outGuardar.close();
+            JOptionPane.showMessageDialog(this, "Alumnos guardados correctamente.");
+        }catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al guardar Alumnos.");
+        }
+    }
+    
+    private void cargarAlumnosTxt(){
+        try{
+            inicializarInputCargar(txtAlumnos);
+            listaAlumnos=(ArrayList)inCargar.readObject();
+            JOptionPane.showMessageDialog(this, "Alumnos cargados correctamente.");
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "Error al cargar Alumnos.");
+        }
+    }
+    
+    private void guardarModulosTxt(){
+        try {
+            inicializarOutputGuardar(txtModulos);
+            outGuardar.writeObject(listaModulos);
+            outGuardar.close();
+            JOptionPane.showMessageDialog(this, "Módulos guardados correctamente.");
+        }catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al guardar Módulos.");
+        }
+    }
+    
+    private void cargarModulosTxt(){
+        try{
+            inicializarInputCargar(txtModulos);
+            listaModulos=(ArrayList)inCargar.readObject();
+            JOptionPane.showMessageDialog(this, "Módulos cargados correctamente.");
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "Error al cargar Módulos.");
+        }
+    }
 
     
     
@@ -770,8 +865,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
             String nombreMod = txtNombreMod.getText();
             int horasMod = Integer.parseInt(txtHorasMod.getText());
             int unidadesMod = Integer.parseInt(txtUnidadesMod.getText());
-            Modulo modul = new Modulo(nombreMod, horasMod, unidadesMod);
-            anadirModulo(modul);
+            if (nombreMod.length()<2){
+                JOptionPane.showMessageDialog(this, "El módulo tiene que tener un nombre de 2 carácteres o más.");
+            }
+            else{
+                Modulo modul = new Modulo(nombreMod, horasMod, unidadesMod);
+                anadirModulo(modul);
+            }
         }catch(NumberFormatException e){
             JOptionPane.showMessageDialog(this, "El módulo no se pudo añadir.");
         }
@@ -801,26 +901,49 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private void crearAlum(){
         String nombreAlum = txtAnaNombreAlum.getText();
         String localidadAlum = txtAnaLocalidadAlum.getText();
-        Alumno alum = null;
-        if (jlAnaModAlum.getComponentCount()==0){
-            alum = new Alumno(nombreAlum, localidadAlum);
+        if (nombreAlum.length()<2 || localidadAlum.length()<2){
+            JOptionPane.showMessageDialog(this, "El alumno y la localidad tienen que tener un nombre de 2 carácteres o más.");
         }
         else{
-            ArrayList<Modulo> modulos = new ArrayList();
-            for (int i = 0; i < jlAnaModAlum.getComponentCount(); i++) {
-                String nomeMod = jlAnaModAlum.getComponent(i).toString();
-                modulos.add(obterModulo(nomeMod));
+            Alumno alum = null;
+            if (jlAnaModAlum.getModel().getSize()==0){
+                alum = new Alumno(nombreAlum, localidadAlum);
+                anadirAlumno(alum);
             }
-            alum = new Alumno(nombreAlum, localidadAlum, modulos);
+            else{
+                ArrayList<Modulo> modulos = new ArrayList();
+                int horas=0;
+                for (int i = 0; i < jlAnaModAlum.getModel().getSize(); i++) {
+                    String nomeMod = jlAnaModAlum.getModel().getElementAt(i);
+                    Modulo mod = obterModulo(nomeMod);
+                    modulos.add(mod);
+                    horas+=mod.getHoras();
+                }
+                if (horas>30){
+                    JOptionPane.showMessageDialog(this, "El total de horas cursadas no puede exceder las 30.");
+                }
+                else{
+                    alum = new Alumno(nombreAlum, localidadAlum, modulos);
+                    anadirAlumno(alum);
+                }
+            }
         }
-        anadirAlumno(alum);
-        JOptionPane.showMessageDialog(this, "El módulo no se pudo añadir.");
+        //JOptionPane.showMessageDialog(this, "El alumno no se pudo añadir.");
     }
     
     private void limpiarAltaAlum(){
         txtAnaNombreAlum.setText("");
         txtAnaLocalidadAlum.setText("");
-        jlAnaModAlum.clearSelection();
+        modelListaModAlum.removeAllElements();
+        jlAnaModAlum.setModel(modelListaModAlum);
+        cargarModulosDisponibles();
+    }
+    
+    private void cargarModulosDisponibles(){
+        jcbModuls.removeAllItems();
+        for (int i = 0; i < listaModulos.size(); i++) {
+            jcbModuls.addItem(listaModulos.get(i).getNombre());
+        }
     }
     
     private void btnGrabarAlumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGrabarAlumActionPerformed
@@ -836,13 +959,52 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
     private void btnQuitarModAlumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitarModAlumActionPerformed
         // TODO add your handling code here:
-        jlAnaModAlum.remove(jlAnaModAlum.getComponent(jlAnaModAlum.getSelectedIndex()));
+        if(jlAnaModAlum.getSelectedValue()!=null){
+            jcbModuls.addItem(jlAnaModAlum.getSelectedValue());
+            modelListaModAlum.remove(jlAnaModAlum.getSelectedIndex());
+            jlAnaModAlum.setModel(modelListaModAlum);
+        }
     }//GEN-LAST:event_btnQuitarModAlumActionPerformed
 
     private void jcbModulsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbModulsActionPerformed
         // TODO add your handling code here:
-        jlAnaModAlum.add((Component) jcbModuls.getSelectedItem());
     }//GEN-LAST:event_jcbModulsActionPerformed
+
+    private void btnAnaModAlumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnaModAlumActionPerformed
+        // TODO add your handling code here:
+        if (jcbModuls.getSelectedItem()!=null){
+            modelListaModAlum.addElement(jcbModuls.getSelectedItem());
+            jcbModuls.removeItem(jcbModuls.getSelectedItem());
+            jlAnaModAlum.setModel(modelListaModAlum);
+        }
+    }//GEN-LAST:event_btnAnaModAlumActionPerformed
+
+    
+    
+    //DIALOG VER ALUMNO//
+    
+    private void btnMostrarAlumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarAlumActionPerformed
+        // TODO add your handling code here:
+        Alumno alum = obterAlumno(txtNombreAlumBuscar.getText());
+        if (alum!=null){
+            txtVerNombreAlum.setText(alum.getNombre());
+            txtVerLocalidadAlum.setText(alum.getLocalidad());
+            txtVerHorasAlum.setText(alum.getNumeroHoras()+"");
+            
+            jlVerModAlum.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = alum.getNombreModulos();
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+            });
+        }
+        else{
+            txtVerNombreAlum.setText("");
+            txtVerLocalidadAlum.setText("");
+            txtVerHorasAlum.setText("");
+            jlVerModAlum.setModel(new DefaultListModel());
+            JOptionPane.showMessageDialog(this, "Alumno no encontrado.");
+        }
+    }//GEN-LAST:event_btnMostrarAlumActionPerformed
 
     
     /**
@@ -887,14 +1049,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
     
     private void anadirModulo(Modulo modul){
         listaModulos.add(modul);
-        jcbModuls.addItem(modul.getNombre());
     }
     
     private Alumno obterAlumno(String nome){
         Alumno alumBuscado = null;
         boolean encontrado=false;
         for (int i = 0; i < listaAlumnos.size() && !encontrado; i++) {
-            if(listaAlumnos.get(i).getNombre()==nome){
+            if(listaAlumnos.get(i).getNombre().equals(nome)){
                 alumBuscado=listaAlumnos.get(i);
                 encontrado=true;
             }
@@ -924,6 +1085,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAnaModAlum;
     private javax.swing.JButton btnAnadirAlum;
     private javax.swing.JButton btnAnadirModul;
     private javax.swing.JButton btnGrabarAlum;
